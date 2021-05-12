@@ -1,0 +1,12 @@
+
+body {
+    text-align: center;
+    font-family: sans-serif;
+    color: rgb(37, 37, 37);
+    background-color: rgb(250, 250, 250);
+}
+  
+button {
+    border-radius: 0% !important;
+}
+  

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sorting Algorithms">
+    <meta name="author" content="Martin Kondor">
+    
+    <title>Sorting Algorithms</title>
+    
+    <link rel="icon" sizes="115x93" href="https://martinkondor.github.io/img/icon.bmp">
+    <link rel="shortcut icon" sizes="115x93" href="https://martinkondor.github.io/img/icon.bmp">
+    <link rel="apple-touch-icon" sizes="115x93" href="https://martinkondor.github.io/img/icon.bmp">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+    <!-- Public sources -->
+    <link href="public/css/index.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid text-center mt-5">
+        <canvas id="myCanvas" width="1200" height="400">Your browser does not support the HTML5 canvas tag.</canvas>
+        
+        <br>
+        <button id="start" class="btn btn-primary">
+            <i class="fas fa-play mr-1"></i>
+            Start
+        </button>
+        <button id="randomize" class="btn btn-outline-warning">
+            <i class="fas fa-redo mr-1"></i>
+            Randomize
+        </button>
+        <br>
+        <div class="mt-2">
+            <span class="mr-1">Speed:</span>
+            <input type="range" min="1" max="100" value="50" class="slider" id="speedSlider">
+        </div>
+        <div class="mt-2">
+            <span class="mr-1">Number of towers:</span>
+            <input type="range" min="1" max="40" value="1" class="slider" id="nOfTowers">
+        </div>
+        <br>
+
+        <footer class="footer text-muted mt-5">
+            <p class="small">
+                This project is made by <a href="https://MartinKondor.github.io/">Martin Kondor</a>,
+                see It's <a href="https://github.com/MartinKondor/SortingAlgorithms">GitHub</a> page for more information.
+            </p>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="public/js/index.js"></script>
+</body>
+</html>
