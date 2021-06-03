@@ -1,4 +1,4 @@
-<p align="center"><img src="public/img/SortingAlgorithms.gif" width="550"></p>
+<a href="https://martinkondor.github.io/SortingAlgorithms/"><p align="center"><img src="public/img/SortingAlgorithms.gif" width="550"></p></a>
 
 # 📊 SortingAlgorithms
 
