@@ -1,4 +1,4 @@
-<a href="https://martinkondor.github.io/SortingAlgorithms/"><p align="center"><img src="public/img/SortingAlgorithms.gif" width="550"></p></a>
+<a href="https://martinkondor.github.io/SortingAlgorithms/"><p align="center"><img src="public/img/SortingAlgorithms.gif" width="550" title="Click to try it out!"></p></a>
 
 # 📊 SortingAlgorithms
 
@@ -18,6 +18,18 @@ Sorting algorithms visualized.
   * Selection sort
   * Merge sort
   * Quicksort
+
+## Goals
+
+  * Make a visual representation of sorting algorithms.
+  * Make it controlable (GUI) with buttons (Start, Randomize, Stop, Speed slider etc.)
+  * See TODO for the algorithms needed to be implemented.
+
+## Guide
+
+* `index.html` - The main file which displays the algorithms and the GUI.
+* `public/` - js, css, img and other folder's. 
+* `public/js/index.js` - Contains the code for the algorithms and the GUI.
 
 ## Contributing
 
