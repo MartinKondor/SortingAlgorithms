@@ -96,11 +96,9 @@
     }
 
     // Sorting algorithms
-    function bubbleSort(delay) {
-        let i = 0;
-        let swapped = false;
+    function bubbleSort(delay, i = 0, swapped = false) {
 
-        let interval = setInterval(function () {
+        setTimeout(function () {
             if (towers[i + 1].height < towers[i].height) {
                 swapTowers(i, i + 1);
                 swapped = true;
@@ -108,32 +106,48 @@
 
             if (++i == towers.length - 1) {
                 if (!swapped) {
-                    clearInterval(interval);
                     $('#randomize').prop('disabled', false);
-                    $('#start').prop('disabled', false);
+                    $('#play').prop('disabled', false);
+                    unPauseSorting();
+                    return;
                 }
 
                 i = 0;
                 swapped = false;
-            }           
+            }   
+            if(!paused)
+                bubbleSort(delay, i, swapped)        
         }, delay);
     }
-
+    function unPauseSorting(){
+        $(".play-pause-toggle").toggle();
+        paused = false;
+    }
+    function pauseSorting(){
+        $(".play-pause-toggle").toggle()
+        paused = true;
+    }
     createTowers();
     drawTowers();
     
     let lastSortFunction = bubbleSort;
     let delayTime = 99;
+    let position = 0;
+    let paused = false;
     $('#speedSlider').val(delayTime);
 
-    $('#start').on('click', function () {
+    $('#play').on('click', function () {
         $('#randomize').prop('disabled', true);
-        $('#start').prop('disabled', true);
-
+        $('#play').prop('disabled', true);
         // Get speed data if not changed
         delayTime = 100 - $('#speedSlider').val();
-        
-        lastSortFunction(delayTime);
+        unPauseSorting();
+        lastSortFunction(delayTime, position);
+    });
+
+    $('#pause').on('click', function () {
+        $('#play').prop('disabled', false);
+        pauseSorting();
     });
 
     $('#randomize').on('click', function () {
