@@ -96,11 +96,9 @@
     }
 
     // Sorting algorithms
-    function bubbleSort(delay) {
-        let i = 0;
-        let swapped = false;
+    function bubbleSort(delay, i = 0, swapped = false) {
 
-        let interval = setInterval(function () {
+        let interval = setTimeout(function () {
             if (towers[i + 1].height < towers[i].height) {
                 swapTowers(i, i + 1);
                 swapped = true;
@@ -115,7 +113,8 @@
 
                 i = 0;
                 swapped = false;
-            }           
+            }   
+            bubbleSort(delay, i, swapped)        
         }, delay);
     }
 
