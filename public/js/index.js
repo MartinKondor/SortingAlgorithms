@@ -9,7 +9,6 @@
 
     CTX.lineWidth = 1;
 
-
     class Tower {
         constructor(xpos, ypos, width, height) {
             this.xpos = xpos;
@@ -28,7 +27,7 @@
         erase() {
             CTX.fillStyle = "#FAFAFA";
             CTX.beginPath();
-            CTX.fillRect(this.xpos, this.ypos, this.width, screenHeight);
+            CTX.fillRect(this.xpos, 0, this.width, screenWidth);
             CTX.stroke();
         }
 
@@ -39,7 +38,6 @@
         }
 
         update(xpos, ypos) {
-
             // Remove the previous tower
             CTX.fillStyle = "#FAFAFA";
             CTX.beginPath();
@@ -64,7 +62,9 @@
         for (let i = 0; i < N; i++) {
             let h = Math.floor(Math.random() * (screenHeight - 1)) + 1;
             // let h = i * (screenHeight - 10) / N + 10;
-            towers.push(new Tower(i + i * towerWidth, screenHeight - h, towerWidth, h));
+            towers.push(
+                new Tower(i + i * towerWidth, screenHeight - h, towerWidth, h)
+            );
         }
     }
 
@@ -81,7 +81,7 @@
     }
 
     function swapTowers(i1, i2, draw = false) {
-        if(draw){
+        if (draw) {
             towers[i1].erase();
             towers[i2].erase();
         }
@@ -90,7 +90,7 @@
         towers[i1].xpos = towers[i2].xpos;
         towers[i2].xpos = temp;
 
-        if(draw){
+        if (draw) {
             towers[i1].draw();
             towers[i2].draw();
         }
@@ -101,116 +101,239 @@
     }
 
     // Sorting algorithms
-    function bubbleSort(delay, i = 0, swapped = false) {
+    function bubbleSort(i = 0, swapped = false) {
+        if (towers[i + 1].height < towers[i].height) {
+            swapTowers(i, i + 1);
+            animation.record([i, i + 1]);
+            swapped = true;
+        }
 
-            if (towers[i + 1].height < towers[i].height) {
-                swapTowers(i, i + 1);
-                animation.addStep([i, i + 1])
-                swapped = true;
-            }
-
-            if (++i == towers.length - 1) {
-                if (!swapped) {
-                    $('#randomize').prop('disabled', false);
-                    $('#play').prop('disabled', false);
-                    return;
-                }
-
-                i = 0;
-                swapped = false;
-            }
-            if (!paused)
-                bubbleSort(delay, i, swapped)
+        if (++i == towers.length - 1) {
+            if (!swapped) return;
+            i = 0;
+            swapped = false;
+        }
+        bubbleSort(i, swapped);
     }
-
-    function unPauseSorting() {
-        $(".play-pause-toggle").toggle();
-        paused = false;
-    }
-
-    function pauseSorting() {
-        $(".play-pause-toggle").toggle();
-        paused = true;
-    }
-
     class Animation {
-        constructor(params){
-            this.towers = params.towers.slice().map(function(a){
-                let emptyTower = new Tower();
-                return Object.assign(emptyTower, a);
-            }); 
+        constructor(params) {
+            this.initialTowers = this.cloneTowers(params.towers);
+            this.towers = this.cloneTowers(params.towers);
             this.queue = [];
             this.current = 0;
+            this.delay = params.delay ?? 500;
             this.initialized = false;
             this.paused = false;
+            this.on = {};
+            this.on.complete = params.complete ?? function () { };
+            this.on.pause = params.pause ?? function () { };
+            this.on.unPause = params.unPause ?? function () { };
+            this.on.forward = params.forward ?? function () { };
+            this.on.back = params.back ?? function () { };
+            this.on.play = params.play ?? function () { };
+            this.on.backToStart = params.backToStart ?? function () { };
+            this.on.reset = params.reset ?? function () { };
+            this.on.stop = params.stop ?? function () { };
         }
-        createTowers(){
-            towers=this.towers
+        createTowers() {
+            towers = this.towers;
             this.initialized = true;
         }
-        addStep  (step) {
+        cloneTowers(towers) {
+            return towers.slice().map(function (a) {
+                let emptyTower = new Tower();
+                return Object.assign(emptyTower, a);
+            });
+        }
+        trigger(eventName) {
+            let currentStep = this.queue[this.current];
+            switch (eventName) {
+                case "complete":
+                    this.on["complete"]();
+                    break;
+                case "pause":
+                    this.on["pause"]();
+                    break;
+                case "unPause":
+                    this.on["unPause"]();
+                    break;
+                case "forward":
+                    this.on["forward"](currentStep);
+                    break;
+                case "back":
+                    this.on["back"](currentStep);
+                    break;
+                case "play":
+                    this.on["play"]();
+                    break;
+                case "backToStart":
+                    this.on["backToStart"]();
+                    break;
+                case "reset":
+                    this.on["reset"]();
+                    break;
+                case "stop":
+                    this.on["stop"](this.cloneTowers(this.towers));
+                    break;
+
+                default:
+                    console.error("event Name " + eventName + " not found");
+                    break;
+            }
+        }
+        setTowers(newTowers) {
+            this.pause();
+            this.initialTowers = this.cloneTowers(newTowers);
+            this.reset();
+        }
+        reset() {
+            this.initialized = false;
+            this.towers = this.cloneTowers(this.initialTowers);
+            this.current = 0;
+            this.queue = [];
+            this.trigger("reset");
+            this.trigger("backToStart");
+        }
+        stop() {
+            this.pause();
+            this.towers = this.cloneTowers(this.initialTowers);
+            this.current = 0;
+            this.trigger("stop");
+            this.trigger("backToStart");
+        }
+        setDelay(delay) {
+            this.delay = delay;
+        }
+        record(step) {
             this.queue.push(step);
         }
-        play  () {
+        play() {
+            if (!this.initialized) this.createTowers();
+            this.trigger("play");
+            this.unPause();
+            this.continue();
+        }
+        continue() {
             var self = this;
-            if(!this.initialized) this.createTowers()
             setTimeout(function () {
-                if((self.current < self.queue.length)){
-                    self.next(function(){self.play()})
+                if (self.current < self.queue.length) {
+                    if (!self.paused)
+                        self.forward(function () {
+                            self.continue();
+                        });
+                } else {
+                    self.trigger("complete");
                 }
-            },50)
+            }, self.delay);
         }
-        pause(){
-
+        pause() {
+            this.trigger("pause");
+            this.paused = true;
         }
-        next  (func=false) {
-            if(!this.initialized) this.createTowers()
-            let leftTower = this.queue[this.current][0];
-            let rightTower = this.queue[this.current][1];
-            swapTowers(leftTower, rightTower, true);
+        unPause() {
+            this.trigger("unPause");
+            this.paused = false;
+        }
+        forward(func = false) {
+            if (!this.initialized) this.createTowers();
+            this.trigger("forward");
             this.current++;
-            if(func!==false) func()
+            if (func !== false) func();
+        }
+        back(func = false) {
+            this.current--;
+            if (this.current == 0) this.trigger("backToStart");
+            this.trigger("back");
+            if (func !== false) func();
         }
     }
     createTowers();
     drawTowers();
     let lastSortFunction = bubbleSort;
-    let animation = new Animation({towers:towers}); 
-    let delayTime = 99;
-    let position = 0;
-    let paused = false;
-    lastSortFunction(delayTime, position);
-    $('#speedSlider').val(delayTime);
+    let animation = new Animation({
+        towers: towers,
+        delay: 90,
+        complete: function () {
+            $("#play").prop("disabled", true);
+            $("#pause").prop("disabled", true);
+            $("#forward").prop("disabled", true);
+            $("#randomize").prop("disabled", false);
+        },
+        play: function () {
+            $("#play").prop("disabled", true);
+            $("#pause").prop("disabled", false);
+            $("#forward").prop("disabled", true);
+            $("#randomize").prop("disabled", true);
+            $("#stop").prop("disabled", false);
+        },
+        pause: function () {
+            $("#play").prop("disabled", false);
+            $("#pause").prop("disabled", true);
+            $("#forward").prop("disabled", false);
+            $("#randomize").prop("disabled", false);
+            $("#stop").prop("disabled", false);
+        },
+        backToStart: function () {
+            $("#back").prop("disabled", true);
+            $("#stop").prop("disabled", true);
+        },
+        forward: function (step) {
+            $("#back").prop("disabled", false);
+            $("#stop").prop("disabled", false);
+            let leftTower = step[0];
+            let rightTower = step[1];
+            swapTowers(leftTower, rightTower, true);
+        },
+        back: function (step) {
+            $("#forward").prop("disabled", false);
+            let leftTower = step[0];
+            let rightTower = step[1];
+            swapTowers(rightTower, leftTower, true);
+        },
+        stop: function (animationTowers) {
+            $("#forward").prop("disabled", false);
+            eraseTowers();
+            towers = animationTowers;
+            drawTowers();
+        },
+    });
+    lastSortFunction();
 
-    $('#play').on('click', function () {
-        $('#randomize').prop('disabled', true);
-        $('#play').prop('disabled', true);
-        // Get speed data if not changed
-        delayTime = 100 - $('#speedSlider').val();
-        unPauseSorting();
-        animation.play()
+    $("#play").on("click", function () {
+        animation.play();
     });
 
-    $('#pause').on('click', function () {
-        $('#play').prop('disabled', false);
-        pauseSorting();
+    $("#pause").on("click", function () {
+        animation.pause();
     });
 
-    $('#randomize').on('click', function () {
+    $("#forward").on("click", function () {
+        animation.forward();
+    });
+    $("#back").on("click", function () {
+        animation.back();
+    });
+    $("#stop").on("click", function () {
+        animation.stop();
+    });
+
+    $("#randomize").on("click", function () {
         eraseTowers();
         createTowers();
         drawTowers();
+        animation.setTowers(towers);
+        lastSortFunction();
     });
 
-    $('#speedSlider').on('change', function () {
-        delayTime = 100 - $('#speedSlider').val();
+    $("#speedSlider").on("change", function () {
+        let delayTime = 100 - $("#speedSlider").val();
+        animation.setDelay(delayTime);
     });
 
-    $('#nOfTowers').on('change', function () {
+    $("#nOfTowers").on("change", function () {
         eraseTowers();
-        towerWidth = 40 - $('#nOfTowers').val() + 1;
+        towerWidth = 40 - $("#nOfTowers").val() + 1;
         createTowers();
         drawTowers();
     });
-
 })(jQuery);
