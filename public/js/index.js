@@ -238,7 +238,9 @@
             if (!this.initialized) this.createTowers();
             this.trigger("forward");
             this.current++;
+            if (this.current == this.queue.length) this.trigger("complete");
             if (func !== false) func();
+            
         }
         back(func = false) {
             this.current--;
@@ -285,12 +287,14 @@
             swapTowers(leftTower, rightTower, true);
         },
         back: function (step) {
+            $("#play").prop("disabled", false);
             $("#forward").prop("disabled", false);
             let leftTower = step[0];
             let rightTower = step[1];
             swapTowers(rightTower, leftTower, true);
         },
         stop: function (animationTowers) {
+            $("#play").prop("disabled", false);
             $("#forward").prop("disabled", false);
             eraseTowers();
             towers = animationTowers;
