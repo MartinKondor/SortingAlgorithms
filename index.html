@@ -14,7 +14,6 @@
     <link rel="apple-touch-icon" sizes="115x93" href="https://martinkondor.github.io/img/icon.bmp">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
-
     <!-- Public sources -->
     <link href="public/css/index.css" rel="stylesheet">
 </head>
@@ -27,9 +26,21 @@
             <i class="fas fa-play mr-1"></i>
             Play
         </button>
-        <button id="pause" class="btn btn-primary play-pause-toggle hidden">
+        <button id="stop" class="btn btn-primary play-pause-toggle" disabled>
+            <i class="fas fa-stop mr-1"></i>
+            Stop
+        </button>
+        <button id="back" class="btn btn-primary" disabled>
+            <i class="fas fa-step-backward mr-1"></i>
+            Back
+        </button>
+        <button id="pause" class="btn btn-primary play-pause-toggle" disabled>
             <i class="fas fa-pause mr-1"></i>
             Pause
+        </button>
+        <button id="forward" class="btn btn-primary ">
+            <i class="fas fa-step-forward mr-1"></i>
+            Forward
         </button>
         <button id="randomize" class="btn btn-outline-warning">
             <i class="fas fa-redo mr-1"></i>
@@ -38,7 +49,7 @@
         <br>
         <div class="mt-2">
             <span class="mr-1">Speed:</span>
-            <input type="range" min="1" max="100" value="50" class="slider" id="speedSlider">
+            <input type="range" min="1" max="100" value="50" class="slider" id="speedSlider" value="90">
         </div>
         <div class="mt-2">
             <span class="mr-1">Number of towers:</span>
@@ -53,7 +64,6 @@
             </p>
         </footer>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="public/js/index.js"></script>
 </body>
