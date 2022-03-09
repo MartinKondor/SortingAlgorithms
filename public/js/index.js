@@ -290,13 +290,19 @@
         }
         bubbleSort(arr, i, swapped);
     }
-    
+
+    function insertionSort(arr) {
+        console.log("insertionSort");
+    }
+
+    // Stores the selected sorting agorithm
+    let sortingAlgorithm = bubbleSort;
     let arrLength = screenWidth / towerWidth - 1;
     let arr = randomArr(arrLength, 10, screenHeight - 1);
     let animation = new Animation({
-        array:arr,
+        array: arr,
         // the array gets updated twice on each swap so each 2 consecutive updates represent a step
-        recordEach:2,
+        recordEach: 2,
         towers: towers,
         delay: 90,
         init:function(step){
@@ -345,8 +351,18 @@
         },
     });
 
-    animation.record(function(arr){
-        bubbleSort(arr);
+    $('#algorithm').click(function () {
+        if ($('#algorithm').val() === 'bubble') {
+            sortingAlgorithm = bubbleSort;
+        }
+        if ($('#algorithm').val() === 'insertion') {
+            sortingAlgorithm = insertionSort;
+        }
+        console.log("ITT VAGYOK");
+    });
+
+    animation.record(function(arr) {
+        sortingAlgorithm(arr);
     })
 
     $("#play").on("click", function () {
@@ -371,7 +387,7 @@
         let arr = randomArr(arrLength, 10, screenHeight - 1);
         animation.setArray(arr);
         animation.record(function(arr){
-            bubbleSort(arr)
+            sortingAlgorithm(arr);
         })
     });
 
@@ -385,8 +401,8 @@
         let arrLength = screenWidth / towerWidth - 1;
         let arr = randomArr(arrLength, 10, screenHeight - 1);
         animation.setArray(arr);
-        animation.record(function(arr){
-            bubbleSort(arr)
+        animation.record(function(arr) {
+            sortingAlgorithm(arr);
         })
     });
 })(jQuery);
